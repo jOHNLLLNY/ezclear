@@ -1,0 +1,53 @@
+export const BASE_EN = {
+  nav:{ home:'Home', myJobs:'My Jobs', myJobs_short:'Jobs', messages:'Messages', profile:'Profile' },
+  settings:{ save:'Save Changes', language:'Language' },
+  hero:{ search_contractors:'Search Contractors', search_jobs:'Search Jobs' },
+  jobs:{
+    title:'Jobs',
+    viewApplicants:'View Applicants',
+    close:'Close',
+    closedSuccess:'Job closed',
+    noResults:'No jobs found matching your criteria',
+    tryAdjust:'Try adjusting your search filters',
+    clearFilters:'Clear filters',
+    filters:'Filters',
+    apply:'Apply',
+    details:'Details',
+    onlyHirers:'Only for hirers',
+    onlyWorkers:'Only for workers'
+  }
+};
+
+export const NAV_SHORT_OVERRIDES: Record<string, Partial<typeof BASE_EN['nav']>> = {
+  uk:{ myJobs:'Мої роботи', myJobs_short:'Роботи', home:'Головна', messages:'Повідомлення', profile:'Профіль' },
+  pl:{ myJobs:'Moje zlecenia', myJobs_short:'Zlecenia', home:'Start', messages:'Wiadomości', profile:'Profil' },
+  de:{ myJobs:'Meine Aufträge', myJobs_short:'Aufträge', home:'Start', messages:'Nachrichten', profile:'Profil' },
+  fr:{ myJobs:'Mes missions', myJobs_short:'Missions', home:'Accueil' },
+  es:{ myJobs:'Mis trabajos', myJobs_short:'Trabajos', home:'Inicio' },
+  it:{ myJobs:'I miei lavori', myJobs_short:'Lavori' },
+  pt:{ myJobs:'Meus trabalhos', myJobs_short:'Trabalhos' },
+  tr:{ myJobs:'İşlerim', myJobs_short:'İşler' },
+  nl:{ myJobs:'Mijn klussen', myJobs_short:'Klussen' },
+  ro:{ myJobs:'Lucrările mele', myJobs_short:'Lucrări' },
+  cs:{ myJobs:'Moje zakázky', myJobs_short:'Zakázky' },
+  sv:{ myJobs:'Mina jobb', myJobs_short:'Jobb' },
+  da:{ myJobs:'Mine jobs', myJobs_short:'Jobs' },
+  no:{ myJobs:'Mine jobber', myJobs_short:'Jobber' },
+  fi:{ myJobs:'Työni', myJobs_short:'Työt' },
+  el:{ myJobs:'Οι εργασίες μου', myJobs_short:'Εργασίες' },
+  he:{ myJobs:'העבודות שלי', myJobs_short:'עבודות' },
+  ar:{ myJobs:'وظائفي', myJobs_short:'وظائف' },
+  fa:{ myJobs:'کارهای من', myJobs_short:'کارها' },
+  ur:{ myJobs:'میری نوکریاں', myJobs_short:'نوکریاں' },
+  'zh-CN':{ myJobs:'我的工作', myJobs_short:'工作', home:'首页' },
+  'zh-TW':{ myJobs:'我的工作', myJobs_short:'工作', home:'首頁' },
+  ja:{ myJobs:'マイジョブ', myJobs_short:'ジョブ', home:'ホーム' },
+  ko:{ myJobs:'내 작업', myJobs_short:'작업', home:'홈' },
+  vi:{ myJobs:'Công việc của tôi', myJobs_short:'Công việc' },
+  th:{ myJobs:'งานของฉัน', myJobs_short:'งาน' },
+  id:{ myJobs:'Pekerjaan saya', myJobs_short:'Pekerjaan' },
+  ms:{ myJobs:'Kerja saya', myJobs_short:'Kerja' },
+  fil:{ myJobs:'Aking mga trabaho', myJobs_short:'Trabaho' },
+  sw:{ myJobs:'Kazi zangu', myJobs_short:'Kazi' },
+};
+

@@ -1,0 +1,53 @@
+{
+  "expo": {
+    "name": "EZ Clear",
+    "slug": "ez-clear-native",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "jsEngine": "hermes",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0B0F1A"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ezclear.native",
+      "associatedDomains": [],
+      "infoPlist": {
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": [
+              "com.googleusercontent.apps.1053216985087-9k221kj119siosnn9cpevfkdu87p40nl"
+            ]
+          }
+        ]
+      }
+    },
+    "android": {
+      "package": "com.ezclear.nativeapp"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "scheme": "ez-clear",
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with other users.",
+          "cameraPermission": "The app accesses your camera to let you take photos to share with other users."
+        }
+      ],
+      "expo-font",
+      "expo-localization"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

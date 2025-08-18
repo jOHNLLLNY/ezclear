@@ -1,0 +1,20 @@
+{
+  "root": true,
+  "env": { "es2021": true, "react-native/react-native": true },
+  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:@typescript-eslint/recommended"],
+  "plugins": ["react", "react-native", "@typescript-eslint", "i18next"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": { "ecmaFeatures": { "jsx": true }, "ecmaVersion": 2021, "sourceType": "module" },
+  "rules": {
+    "i18next/no-literal-string": ["error", { "mode": "jsx-text", "markupOnly": true }]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.tsx"],
+      "rules": {
+        "i18next/no-literal-string": ["error", { "mode": "jsx-text", "markupOnly": true }]
+      }
+    }
+  ]
+}
+
