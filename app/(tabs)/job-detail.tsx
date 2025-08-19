@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Alert, Image, Modal, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Alert, Image, Modal, Pressable, TextInput } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../src/context/ThemeProvider';
@@ -13,6 +13,7 @@ import i18n from '../../i18n';
 import { AIEstimate } from '../../src/components/ui/AIEstimate';
 import { AICard } from '../../src/components/ui/AICard';
 import { Expandable } from '../../src/components/ui/Expandable';
+import { useTx } from '../../i18n/tx';
 
 function timeAgo(iso?: string): string {
   if (!iso) return i18n.t('job.posted_ago', { n: 0, u: 'm' });
@@ -41,6 +42,15 @@ export default function JobDetailScreen() {
   const [appCount, setAppCount] = useState<number>(0);
   const [busy, setBusy] = useState(false);
   const [photoIndex, setPhotoIndex] = useState<number | null>(null);
+  const txServices = useTx('services');
+  const [cover, setCover] = useState('');
+  const [myApp, setMyApp] = useState<any|null>(null);
+  const isPoster = useMemo(() => {
+    const uid = user?.id
+    return !!uid && (job?.poster_id === uid || job?.user_id === uid)
+  }, [user?.id, job?.poster_id, job?.user_id])
+
+
   const photos = useMemo(()=> (Array.isArray(job?.photos) ? job?.photos : []), [job]);
 
   useEffect(() => {
@@ -60,9 +70,14 @@ export default function JobDetailScreen() {
           const p = await supabase.from('profiles').select('id,full_name,avatar_url,city').eq('id', j.data.poster_id).single();
           if (!p.error) setPoster(p.data);
         }
-        // Applicants count
-        const r = await supabase.from('job_applications').select('id', { count: 'exact', head: true }).eq('job_id', String(id));
-        setAppCount(r.count || 0);
+        // Applicants count and my application
+        const authUser = (await supabase.auth.getUser()).data.user
+        const [{ count }, { data: mine }] = await Promise.all([
+          supabase.from('applications').select('id', { count: 'exact', head: true }).eq('job_id', String(id)),
+          supabase.from('applications').select('id,status').eq('job_id', String(id)).eq('worker_id', authUser?.id || '').maybeSingle(),
+        ])
+        setAppCount(count || 0)
+        setMyApp(mine || null)
       } catch (e: any) {
         setError(e.message || 'Failed to load job');
       } finally {
@@ -114,7 +129,7 @@ export default function JobDetailScreen() {
             {/* Service card */}
             <View style={{ marginTop: 10, backgroundColor:'#111827', borderRadius: 16, borderWidth:1, borderColor:'#2A3345', padding: 12 }}>
               <Text style={{ color: colors.textSecondary, fontSize: 12 }}>{i18n.t('job.service')}</Text>
-              <Text style={{ color: colors.textPrimary, fontFamily: typography.fontFamily.semibold, marginTop: 4 }}>{job.service_slug || i18n.t('job.generalService')}</Text>
+              <Text style={{ color: colors.textPrimary, fontFamily: typography.fontFamily.semibold, marginTop: 4 }}>{job.service_slug ? txServices(job.service_slug) : i18n.t('job.generalService')}</Text>
             </View>
 
             {/* Description with collapse */}
@@ -164,15 +179,105 @@ export default function JobDetailScreen() {
             </TouchableOpacity>
 
             <View style={{ flexDirection:'row', gap:8 }}>
-              <TouchableOpacity
-                disabled={busy || String(job?.status||'').toLowerCase()!=='open'}
-                onPress={async () => {
-                  try {
-                    setBusy(true);
-                    const { error } = await supabase
-                      .from('jobs')
-                      .update({ status: 'completed', closed_at: new Date().toISOString() })
-                      .eq('id', job.id)
+              {isPoster && (
+                <TouchableOpacity
+                  disabled={busy || String(job?.status||'').toLowerCase()!=='open'}
+                  onPress={async () => {
+                    try {
+                      setBusy(true);
+                      const { error } = await supabase
+                        .from('jobs')
+                        .update({ status: 'completed', closed_at: new Date().toISOString() })
+                        .eq('id', job.id)
+                        .eq('poster_id', user?.id);
+                      if (error) throw error;
+                      Alert.alert(i18n.t('toast.jobMovedToCompleted'));
+                      router.replace('/(tabs)/my-jobs');
+                    } catch (e:any) {
+                      Alert.alert(i18n.t('common.error'), e?.message || 'Failed to close');
+                    } finally { setBusy(false); }
+                  }}
+                  style={{ height: 48, flex:1, borderRadius: 14, backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <Text style={{ color: '#0B0F1A', fontWeight: '700' }}>{i18n.t('job.close')}</Text>
+                </TouchableOpacity>
+              )}
+
+              {/* Worker Apply/Withdraw + AI pitch */}
+              <View style={{ height: 16 }} />
+              <View style={{ backgroundColor:'#0F172A', borderWidth:1, borderColor:'#2A3345', borderRadius:16, padding:12 }}>
+                <Text style={{ color: colors.textPrimary, fontFamily: typography.fontFamily.semibold }}>{i18n.t('job.applyTitle') || 'Apply to this job'}</Text>
+                {!myApp ? (
+                  <>
+                    <View style={{ marginTop:8, backgroundColor:'#111827', borderWidth:1, borderColor:'#2A3345', borderRadius:12, padding:10 }}>
+                      <TextInput
+                        placeholder={i18n.t('job.coverPlaceholder') || 'Write a short message...'}
+                        placeholderTextColor={colors.textDisabled}
+                        style={{ color: colors.onSurface, minHeight: 100, textAlignVertical:'top' }}
+                        value={cover}
+                        onChangeText={setCover}
+                        multiline
+                      />
+                    </View>
+                    <View style={{ flexDirection:'row', gap:8, marginTop:10 }}>
+                      <TouchableOpacity
+                        onPress={async()=>{
+                          try {
+                            if (!user?.id) { Alert.alert(i18n.t('common.error'), 'Auth required'); return }
+                            const { error: e } = await supabase.from('applications').insert({ job_id: String(id), worker_id: user.id, cover_letter: cover.trim(), status:'submitted' })
+                            if (e) throw e
+                            Alert.alert(i18n.t('jobDetails.applicationSubmitted') || 'Application submitted')
+                            setMyApp({ status:'submitted' })
+                            setAppCount(n=> n+1)
+                          } catch (e:any) { Alert.alert(i18n.t('common.error'), e?.message||i18n.t('common.failed')) }
+                        }}
+                        disabled={!cover.trim() || String(job?.status||'').toLowerCase()!=='open'}
+                        style={{ flex:1, height:44, borderRadius:12, backgroundColor: colors.accent, alignItems:'center', justifyContent:'center', opacity: (!cover.trim() || String(job?.status||'').toLowerCase()!=='open')?0.6:1 }}>
+                        <Text style={{ color:'#0B0F1A', fontWeight:'700' }}>{i18n.t('jobs.apply') || 'Apply'}</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={async()=>{
+                          const { isAiCapped, setAiCapped, includesCapError } = await import('../../src/lib/aiCap')
+                          if (await isAiCapped()) { Alert.alert('AI', 'Monthly AI limit reached.'); return }
+                          try {
+                            const { aiSuggestReply } = await import('../../src/lib/ai')
+                            const { ensureSession } = await import('../../src/lib/supabase')
+                            await ensureSession();
+                            const history = [
+                              { role:'system', content:'You are a professional tradesperson writing a short cover letter.'},
+                              { role:'user', content:`Job: ${job.title}\nDescription: ${job.description}\nService: ${job.service_slug}`}
+                            ]
+                            const res = await aiSuggestReply(history as any, i18n.language)
+                            if (res?.reply) setCover(res.reply)
+                          } catch (e:any) {
+                            if (includesCapError(e)) { await setAiCapped(); Alert.alert('AI', 'Monthly AI limit reached.') }
+                          }
+                        }}
+                        style={{ height:44, paddingHorizontal:12, borderRadius:12, borderWidth:1, borderColor:'#334155', alignItems:'center', justifyContent:'center' }}>
+                        <Text style={{ color: colors.textPrimary }}>{i18n.t('ai.explain') || 'Suggest'}</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                ) : (
+                  <View style={{ flexDirection:'row', gap:8, marginTop:8 }}>
+                    <TouchableOpacity
+                      onPress={async()=>{
+                        try{
+                          if (!user?.id) { Alert.alert(i18n.t('common.error'), 'Auth required'); return }
+                          const { error } = await supabase.from('applications').delete().eq('job_id', String(id)).eq('worker_id', user.id)
+                          if (error) throw error
+                          Alert.alert(i18n.t('jobDetails.withdrawn') || 'Application withdrawn')
+                          setMyApp(null)
+                          setAppCount(n=> Math.max(0, n-1))
+                        } catch (e:any) { Alert.alert(i18n.t('common.error'), e?.message || i18n.t('common.failed')) }
+                      }}
+                      style={{ flex:1, height:44, borderRadius:12, borderWidth:1, borderColor:'#334155', alignItems:'center', justifyContent:'center' }}>
+                      <Text style={{ color: colors.textPrimary }}>{i18n.t('jobDetails.withdraw') || 'Withdraw'}</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+
                       .eq('poster_id', user?.id);
                     if (error) throw error;
                     Alert.alert(i18n.t('toast.jobMovedToCompleted'));
