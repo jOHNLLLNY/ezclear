@@ -47,6 +47,8 @@ export default function ContractorsListScreen() {
   const params = useLocalSearchParams<{ service?: string; jobId?: string }>()
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<any[]>([])
+  const [aiExplain, setAiExplain] = useState<string | null>(null)
+  const [aiLoading, setAiLoading] = useState(false)
 
   const filter = useMemo(() => (typeof params.service === 'string' ? params.service : undefined), [params.service])
 
@@ -147,15 +149,17 @@ export default function ContractorsListScreen() {
                   if (!data?.length) return;
                   const jobId = typeof params.jobId==='string' ? params.jobId : undefined
                   if (!jobId) { return; }
+                  setAiLoading(true)
+                  setAiExplain(null)
                   const { aiExplainRanking } = await import('../../src/lib/ai')
                   const { ensureSession } = await import('../../src/lib/supabase')
                   await ensureSession();
                   const payload = { jobId, contractors: data.slice(0,5).map((c:any)=> ({ id: c.id, score: Number(c.score||0), features: { rating:c.rating, services:c.services||[], location:c.location } })) }
                   const res = await aiExplainRanking(payload)
-                  Alert.alert(i18n.t('ai.explain_ranking'), (res?.explanations||'').slice(0,800))
+                  setAiExplain((res?.explanations||'').slice(0,1200))
                 } catch(e:any) {
                   if (includesCapError(e)) { const { setAiCapped } = await import('../../src/lib/aiCap'); await setAiCapped(); Alert.alert('AI', 'Monthly AI limit reached.') }
-                }
+                } finally { setAiLoading(false) }
               }}
               style={{ borderWidth:1, borderColor:'#334155', borderRadius:999, paddingHorizontal:12, paddingVertical:6 }}
             >
@@ -165,6 +169,21 @@ export default function ContractorsListScreen() {
             </Pressable>
           </View>
         </View>
+
+        {aiLoading && (
+          <View style={{ paddingHorizontal: spacing[4], paddingBottom: 4 }}>
+            <AICard title={i18n.t('ai.explain_ranking')}>
+              <Text style={{ color:'#E5E7EB' }}>{i18n.t('ai.loading')}</Text>
+            </AICard>
+          </View>
+        )}
+        {!!aiExplain && !aiLoading && (
+          <View style={{ paddingHorizontal: spacing[4], paddingBottom: 4 }}>
+            <AICard title={i18n.t('ai.explain_ranking')}>
+              <Text style={{ color:'#E5E7EB' }}>{aiExplain}</Text>
+            </AICard>
+          </View>
+        )}
 
         {loading ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
