@@ -35,6 +35,8 @@ export default function JobDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [aiEst, setAiEst] = useState<{ low?: number; high?: number; days?: number }|null>(null);
+  const [aiExplain, setAiExplain] = useState<string[] | null>(null);
+  const [showExplain, setShowExplain] = useState(false);
   const [appCount, setAppCount] = useState<number>(0);
   const [busy, setBusy] = useState(false);
   const [photoIndex, setPhotoIndex] = useState<number | null>(null);
@@ -196,8 +198,8 @@ export default function JobDetailScreen() {
                   await ensureSession();
                   const res = await aiEstimateJob({ title: job.title, description: job.description, city: job.city, service_slug: job.service_slug })
                   setAiEst({ low: res?.cost_low, high: res?.cost_high, days: res?.days })
-                  // Fetch explain bullets in background (best-effort)
-                  try { const ex = await aiExplainEstimate({ title: job.title, description: job.description, city: job.city, service_slug: job.service_slug }); (ex as any)._bullets = ex?.bullets } catch {}
+                  setAiExplain(null)
+                  try { const ex = await aiExplainEstimate({ title: job.title, description: job.description, city: job.city, service_slug: job.service_slug }); setAiExplain((ex?.bullets||[]).slice(0,5)) } catch {}
                 } catch (e:any) {
                   if (includesCapError(e)) { await setAiCapped(); Alert.alert('AI', 'Monthly AI limit reached.') }
                   else { Alert.alert(i18n.t('common.aiError'), e?.message||i18n.t('common.failed')) }
@@ -210,21 +212,11 @@ export default function JobDetailScreen() {
             {aiEst && (
               <View style={{ marginTop: 10 }}>
                 <AIEstimate low={aiEst.low} high={aiEst.high} days={aiEst.days} />
-                <View style={{ height: 8 }} />
-                <TouchableOpacity
-                  onPress={async()=>{
-                    try {
-                      const { aiExplainEstimate } = await import('../../src/lib/ai')
-                      const ex = await aiExplainEstimate({ title: job.title, description: job.description, city: job.city, service_slug: job.service_slug })
-                      const bullets = (ex?.bullets||[]).slice(0,5)
-                      if (!bullets.length) return;
-                      Alert.alert(i18n.t('ai.why_estimate'), bullets.map(b=>`• ${b}`).join('\n'))
-                    } catch (e:any) { Alert.alert(i18n.t('common.aiError'), e?.message||i18n.t('common.failed')) }
-                  }}
-                  style={{ height: 44, borderRadius: 12, borderWidth:1, borderColor:'#334155', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <Text style={{ color: colors.textPrimary }}>{i18n.t('ai.why_estimate')}</Text>
-                </TouchableOpacity>
+                {!!(aiExplain?.length) ? (
+                  <AICard title={i18n.t('ai.why_estimate')}>
+                    {aiExplain.map((b,idx)=> (<Text key={idx} style={{ color:'#E5E7EB', marginBottom:6 }}>• {b}</Text>))}
+                  </AICard>
+                ) : null}
               </View>
             )}
           </ScrollView>
