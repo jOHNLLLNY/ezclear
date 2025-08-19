@@ -210,6 +210,13 @@ export const UK = {
     ai_applied: 'Опис покращено AI',
     ai_failed: 'Не вдалося застосувати AI',
     fill_title_desc: 'Заповніть Title та Description',
+    attachments: 'Вкладення',
+    add_photo: 'Додати фото',
+    add_file: 'Додати файл',
+    ai_insights: 'AI Insights',
+    risks: 'Ризики',
+    missing_info: 'Відсутня інформація'
+  },
   ai: {
     estimate: 'AI оцінка',
     why_estimate: 'Чому така оцінка?',
@@ -218,37 +225,28 @@ export const UK = {
     tldr: 'Коротко',
     loading: 'Аналіз...',
     note: 'Орієнтовно. Уточніть деталі з підрядником.'
+  },
   contractors: {
-    title: 'Contractors',
-    filteredBy: 'Filtered by',
-    aiSort: 'AI Sort',
-    savedEmpty: 'No saved contractors yet. Browse and tap the ☆ to save.',
-    invite: 'Invite',
-    viewProfile: 'View profile'
+    title: 'Підрядники',
+    filteredBy: 'Відібрано за',
+    aiSort: 'AI сортування',
+    savedEmpty: 'Немає збережених підрядників. Перегляньте список і натисніть ☆, щоб зберегти.',
+    invite: 'Запросити',
+    viewProfile: 'Переглянути профіль'
   },
-
-  },
-
-    attachments: 'Вкладення',
-    add_photo: 'Додати фото',
-    add_file: 'Додати файл',
-    ai_insights: 'AI Insights',
-    risks: 'Ризики',
   profile: {
-    title: 'Profile',
-    noName: 'Unnamed',
-    headline: 'Headline',
-    about: 'About',
-    services: 'Services',
-    portfolio: 'Portfolio',
-    noPortfolio: 'No portfolio yet',
-    reviews: 'Reviews',
-    noReviews: 'No reviews yet',
-    message: 'Message'
+    title: 'Профіль',
+    noName: 'Без імені',
+    headline: 'Заголовок',
+    about: 'Про себе',
+    services: 'Послуги',
+    portfolio: 'Портфоліо',
+    noPortfolio: 'Портфоліо ще немає',
+    reviews: 'Відгуки',
+    noReviews: 'Ще немає відгуків',
+    message: 'Повідомлення'
   },
 
-    missing_info: 'Відсутня інформація'
-  },
   nav: {
     home: 'Головна',
     jobs: 'Роботи',
@@ -333,12 +331,6 @@ export const UK = {
 
     landscaping: 'Ландшафтні роботи',
     'ice-control': 'Боротьба з ожеледицею',
-  },
-  contractors: {
-    title: 'Підрядники',
-    filteredBy: 'Фільтр: ',
-    aiSort: 'AI сортування',
-    sorting: 'Сортування за допомогою AI...'
   },
   job: {
     estimateTitle: 'Кошторис',
