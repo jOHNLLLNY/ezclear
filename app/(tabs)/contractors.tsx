@@ -8,6 +8,7 @@ import { supabase } from '../../src/lib/supabase'
 import i18n from '../../i18n'
 import { AIBadge } from '../../src/components/ui/AIBadge'
 import { AICard } from '../../src/components/ui/AICard'
+import { Expandable } from '../../src/components/ui/Expandable'
 
 // Simple contractor card
 function ContractorCard({ item, onPress }: { item: any; onPress: () => void }) {
@@ -181,7 +182,9 @@ export default function ContractorsListScreen() {
           <View style={{ paddingHorizontal: spacing[4], paddingBottom: 4 }}>
             <AICard title={i18n.t('ai.explain_ranking')}>
               <Text style={{ color:'#E5E7EB', marginBottom:8, opacity:0.9 }}>{i18n.t('ai.tldr')}</Text>
-              <Text style={{ color:'#E5E7EB' }}>{aiExplain}</Text>
+              <Expandable open>
+                <Text style={{ color:'#E5E7EB' }}>{aiExplain}</Text>
+              </Expandable>
             </AICard>
           </View>
         )}
