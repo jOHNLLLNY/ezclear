@@ -23,6 +23,8 @@ export default function ContractorsListScreen() {
   const [aiExplain, setAiExplain] = useState<string | null>(null)
   const [aiLoading, setAiLoading] = useState(false)
 
+  const [inviteOpen, setInviteOpen] = useState<string|null>(null)
+
   const filter = useMemo(() => (typeof params.service === 'string' ? params.service : undefined), [params.service])
 
   useEffect(() => {
@@ -51,8 +53,6 @@ export default function ContractorsListScreen() {
               .maybeSingle()
             // If schema supports join, re-run without maybeSingle and with filter
           } catch {}
-  const [inviteOpen, setInviteOpen] = useState<string|null>(null)
-
         }
         if (!rows) {
           const base = supabase.from('public_contractors').select('id, full_name, avatar_url, location, rating, services')
