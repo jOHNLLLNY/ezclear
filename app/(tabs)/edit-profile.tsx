@@ -114,8 +114,8 @@ export default function EditProfileScreen() {
             <Ionicons name="chevron-down" size={18} color="#9CA3AF" />
           </TouchableOpacity>
 
-          <Text style={styles.label}>About You</Text>
-          <TextInput style={[styles.input, { height: 120, textAlignVertical: 'top' }]} placeholder="Tell us about yourself" placeholderTextColor="#FFFFFF" value={about} onChangeText={setAbout} multiline />
+          <Text style={styles.label}>{i18n.t('profile.about')}</Text>
+          <TextInput style={[styles.input, { height: 120, textAlignVertical: 'top' }]} placeholder={i18n.t('profile.about_placeholder')} placeholderTextColor="#FFFFFF" value={about} onChangeText={setAbout} multiline maxLength={800} />
 
           <TouchableOpacity onPress={handleSave} activeOpacity={0.85} disabled={saving} style={{ height: 56, borderRadius: 14, backgroundColor: '#00E6CF', alignItems: 'center', justifyContent: 'center', marginTop: 20 }}>
             <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 16 }}>{saving ? 'Saving...' : 'Save Changes'}</Text>

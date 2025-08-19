@@ -179,7 +179,9 @@ export const EN = {
     postedJobs: 'posted jobs',
     completedJobs: 'completed jobs',
     joined: 'joined',
-    noName: 'No name'
+    noName: 'No name',
+    about: 'About you',
+    about_placeholder: 'Tell customers about your experience, tools, certifications, and availability.'
   },
   settings: {
     title: 'Settings',
@@ -415,7 +417,9 @@ export const UK = {
     postedJobs: 'опубліковано',
     completedJobs: 'завершено',
     joined: 'приєднався',
-    noName: 'Без імені'
+    noName: 'Без імені',
+    about: 'Про себе',
+    about_placeholder: 'Розкажіть про досвід, інструменти, сертифікати та доступність.'
   },
   settings: {
     title: 'Налаштування',
