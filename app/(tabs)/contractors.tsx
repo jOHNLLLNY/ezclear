@@ -32,35 +32,45 @@ export default function ContractorsListScreen() {
     ;(async () => {
       try {
         setLoading(true)
-        // Try service_slugs on profiles; fallback to contractor_services join; final fallback to skills
         let rows: any[] | null = null
         let error: any = null
+
+        // 1) Try public_contractors view if present
         try {
-          const base = supabase.from('public_contractors').select('id, full_name, avatar_url, location, rating, services')
-          const q = filter ? (base.contains('services', [filter]) as any) : base
-          const r = await q.order('rating', { ascending: false })
-          rows = r.data || null; error = r.error
-        } catch {}
-        if (!rows && !error) {
-          try {
-            const r2 = await supabase
-              .from('profiles')
-              .select(`
-                id, full_name, avatar_url, location, rating,
-                contractor_services:contractor_services!inner(service_slug)
-              `)
-              .eq('user_type','worker')
-              .maybeSingle()
-            // If schema supports join, re-run without maybeSingle and with filter
-          } catch {}
+          const base1 = supabase.from('public_contractors').select('id, full_name, avatar_url, location, rating, services')
+          const q1 = filter ? (base1.contains('services', [filter]) as any) : base1
+          const r1 = await q1.order('rating', { ascending: false })
+          if (!r1.error && (r1.data?.length || 0) > 0) {
+            rows = r1.data || []
+          } else {
+            error = r1.error
+          }
+        } catch (e:any) {
+          error = e
         }
-        if (!rows) {
-          const base = supabase.from('public_contractors').select('id, full_name, avatar_url, location, rating, services')
-          const q = filter ? (base.contains('services', [filter]) as any) : base
-          const r = await q.order('rating', { ascending: false })
-          rows = r.data || []
-          error = r.error
+
+        // 2) Fallback: profiles table for workers, using service_slugs array
+        if (!rows || rows.length === 0) {
+          const base2 = supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url, city, location, rating, user_type, service_slugs')
+            .eq('user_type', 'worker')
+          const q2 = filter ? (base2.contains('service_slugs', [filter]) as any) : base2
+          const r2 = await q2.order('rating', { ascending: false })
+          if (!r2.error) {
+            rows = (r2.data || []).map((p: any) => ({
+              id: p.id,
+              full_name: p.full_name,
+              avatar_url: p.avatar_url,
+              location: p.location || p.city || '',
+              rating: p.rating,
+              services: Array.isArray(p.service_slugs) ? p.service_slugs : [],
+            }))
+          } else {
+            error = r2.error
+          }
         }
+
         if (!error && isMounted) setData(rows || [])
         if (!error && isMounted) setData(rows || [])
       } catch (e) {
