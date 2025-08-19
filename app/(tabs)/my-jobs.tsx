@@ -148,7 +148,8 @@ export default function MyJobsScreen() {
             <FlatList
               data={(jobs.find((b: any) => b.__kind === 'active')?.rows) || []}
               keyExtractor={(it: any) => it.id}
-              contentContainerStyle={{ padding:16, gap:12 }}
+              contentContainerStyle={{ padding:16, paddingBottom: 24, gap:12 }}
+              ListEmptyComponent={<Text style={{ color: colors.muted, textAlign:'center', marginTop: 24 }}>{i18n.t('jobs.empty')}</Text>}
               renderItem={({ item }) => (
                 <Pressable
                   onPress={() => router.push({ pathname: '/(tabs)/job-detail', params: { id: item.id } })}
@@ -185,7 +186,8 @@ export default function MyJobsScreen() {
             <FlatList
               data={(jobs.find((b: any) => b.__kind === 'completed')?.rows) || []}
               keyExtractor={(it: any) => it.id}
-              contentContainerStyle={{ padding:16, gap:12 }}
+              contentContainerStyle={{ padding:16, paddingBottom: 24, gap:12 }}
+              ListEmptyComponent={<Text style={{ color: colors.muted, textAlign:'center', marginTop: 24 }}>{i18n.t('jobs.empty')}</Text>}
               renderItem={({ item }) => (
                 <Pressable onPress={() => router.push({ pathname: '/(tabs)/job-detail', params: { id: item.id } })} style={{ width:'100%', backgroundColor:'#111827', borderRadius:12, padding:12, borderWidth:1, borderColor:'#2A3345' }}>
                   <Text style={{ color: colors.textPrimary, fontFamily: typography.fontFamily.semibold }} numberOfLines={2}>{item.title}</Text>
