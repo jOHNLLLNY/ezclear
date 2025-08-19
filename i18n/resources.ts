@@ -234,6 +234,19 @@ export const UK = {
     add_file: 'Додати файл',
     ai_insights: 'AI Insights',
     risks: 'Ризики',
+  profile: {
+    title: 'Profile',
+    noName: 'Unnamed',
+    headline: 'Headline',
+    about: 'About',
+    services: 'Services',
+    portfolio: 'Portfolio',
+    noPortfolio: 'No portfolio yet',
+    reviews: 'Reviews',
+    noReviews: 'No reviews yet',
+    message: 'Message'
+  },
+
     missing_info: 'Відсутня інформація'
   },
   nav: {
@@ -360,6 +373,19 @@ export const UK = {
     details: 'Деталі',
   contractors: {
     title: 'Підрядники',
+  profile: {
+    title: 'Профіль',
+    noName: 'Без імені',
+    headline: 'Заголовок',
+    about: 'Про себе',
+    services: 'Послуги',
+    portfolio: 'Портфоліо',
+    noPortfolio: 'Портфоліо ще немає',
+    reviews: 'Відгуки',
+    noReviews: 'Ще немає відгуків',
+    message: 'Повідомлення'
+  },
+
     filteredBy: 'Відібрано за',
     aiSort: 'AI сортування',
     savedEmpty: 'Немає збережених підрядників. Перегляньте список і натисніть ☆, щоб зберегти.',
