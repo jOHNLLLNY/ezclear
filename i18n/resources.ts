@@ -20,6 +20,10 @@ export const EN = {
   },
   ai: {
     estimate: 'AI estimate',
+    why_estimate: 'Why this estimate?',
+    explain: 'Explain',
+    explain_ranking: 'Explain ranking',
+    loading: 'Analyzing...',
     note: 'Approximate. Confirm details with the contractor.'
   },
 
@@ -207,6 +211,10 @@ export const UK = {
     fill_title_desc: 'Заповніть Title та Description',
   ai: {
     estimate: 'AI оцінка',
+    why_estimate: 'Чому така оцінка?',
+    explain: 'Пояснити',
+    explain_ranking: 'Пояснити сортування',
+    loading: 'Аналіз...',
     note: 'Орієнтовно. Уточніть деталі з підрядником.'
   },
 

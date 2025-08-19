@@ -210,7 +210,21 @@ export default function JobDetailScreen() {
             {aiEst && (
               <View style={{ marginTop: 10 }}>
                 <AIEstimate low={aiEst.low} high={aiEst.high} days={aiEst.days} />
-                {/* Explain panel placeholder; hooked via AICard when bullets available */}
+                <View style={{ height: 8 }} />
+                <TouchableOpacity
+                  onPress={async()=>{
+                    try {
+                      const { aiExplainEstimate } = await import('../../src/lib/ai')
+                      const ex = await aiExplainEstimate({ title: job.title, description: job.description, city: job.city, service_slug: job.service_slug })
+                      const bullets = (ex?.bullets||[]).slice(0,5)
+                      if (!bullets.length) return;
+                      Alert.alert(i18n.t('ai.why_estimate'), bullets.map(b=>`• ${b}`).join('\n'))
+                    } catch (e:any) { Alert.alert(i18n.t('common.aiError'), e?.message||i18n.t('common.failed')) }
+                  }}
+                  style={{ height: 44, borderRadius: 12, borderWidth:1, borderColor:'#334155', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <Text style={{ color: colors.textPrimary }}>{i18n.t('ai.why_estimate')}</Text>
+                </TouchableOpacity>
               </View>
             )}
           </ScrollView>
