@@ -12,6 +12,7 @@ import { useAuth } from '../../src/context/AuthContext';
 import i18n from '../../i18n';
 import { AIEstimate } from '../../src/components/ui/AIEstimate';
 import { AICard } from '../../src/components/ui/AICard';
+import { Expandable } from '../../src/components/ui/Expandable';
 
 function timeAgo(iso?: string): string {
   if (!iso) return i18n.t('job.posted_ago', { n: 0, u: 'm' });
@@ -214,7 +215,10 @@ export default function JobDetailScreen() {
                 <AIEstimate low={aiEst.low} high={aiEst.high} days={aiEst.days} />
                 {!!(aiExplain?.length) ? (
                   <AICard title={i18n.t('ai.why_estimate')}>
-                    {aiExplain.map((b,idx)=> (<Text key={idx} style={{ color:'#E5E7EB', marginBottom:6 }}>• {b}</Text>))}
+                    <Text style={{ color:'#E5E7EB', marginBottom:8, opacity:0.9 }}>{i18n.t('ai.tldr')}</Text>
+                    <View>
+                      {aiExplain.map((b,idx)=> (<Text key={idx} style={{ color:'#E5E7EB', marginBottom:6 }}>• {b}</Text>))}
+                    </View>
                   </AICard>
                 ) : null}
               </View>

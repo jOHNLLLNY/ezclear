@@ -180,6 +180,7 @@ export default function ContractorsListScreen() {
         {!!aiExplain && !aiLoading && (
           <View style={{ paddingHorizontal: spacing[4], paddingBottom: 4 }}>
             <AICard title={i18n.t('ai.explain_ranking')}>
+              <Text style={{ color:'#E5E7EB', marginBottom:8, opacity:0.9 }}>{i18n.t('ai.tldr')}</Text>
               <Text style={{ color:'#E5E7EB' }}>{aiExplain}</Text>
             </AICard>
           </View>

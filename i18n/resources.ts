@@ -23,6 +23,7 @@ export const EN = {
     why_estimate: 'Why this estimate?',
     explain: 'Explain',
     explain_ranking: 'Explain ranking',
+    tldr: 'Summary',
     loading: 'Analyzing...',
     note: 'Approximate. Confirm details with the contractor.'
   },
@@ -214,6 +215,7 @@ export const UK = {
     why_estimate: 'Чому така оцінка?',
     explain: 'Пояснити',
     explain_ranking: 'Пояснити сортування',
+    tldr: 'Коротко',
     loading: 'Аналіз...',
     note: 'Орієнтовно. Уточніть деталі з підрядником.'
   },
