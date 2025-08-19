@@ -203,6 +203,9 @@ export default function JobDetailScreen() {
                 </TouchableOpacity>
               )}
 
+
+              </View>
+
               {/* Worker Apply/Withdraw + AI pitch */}
               <View style={{ height: 16 }} />
               <View style={{ backgroundColor:'#0F172A', borderWidth:1, borderColor:'#2A3345', borderRadius:16, padding:12 }}>
@@ -278,19 +281,6 @@ export default function JobDetailScreen() {
                 )}
               </View>
 
-                      .eq('poster_id', user?.id);
-                    if (error) throw error;
-                    Alert.alert(i18n.t('toast.jobMovedToCompleted'));
-                    router.replace('/(tabs)/my-jobs');
-                  } catch (e:any) {
-                    Alert.alert(i18n.t('common.error'), e?.message || 'Failed to close');
-                  } finally { setBusy(false); }
-                }}
-                style={{ height: 48, flex:1, borderRadius: 14, backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center' }}
-              >
-                <Text style={{ color: '#0B0F1A', fontWeight: '700' }}>{i18n.t('job.close')}</Text>
-              </TouchableOpacity>
-            </View>
 
             {/* AI estimate */}
             <View style={{ height: 16 }} />
