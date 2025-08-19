@@ -7,6 +7,7 @@ import { useTheme } from '../../src/context/ThemeProvider'
 import { supabase } from '../../src/lib/supabase'
 import i18n from '../../i18n'
 import { AIBadge } from '../../src/components/ui/AIBadge'
+import { AICard } from '../../src/components/ui/AICard'
 
 // Simple contractor card
 function ContractorCard({ item, onPress }: { item: any; onPress: () => void }) {
@@ -102,39 +103,67 @@ export default function ContractorsListScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <View style={{ paddingHorizontal: spacing[4], paddingTop: spacing[4], paddingBottom: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text style={{ color: colors.textPrimary, fontFamily: typography.fontFamily.bold, fontSize: typography.fontSize.xl }}>
-            {i18n.t('contractors.title')}
-          </Text>
-          {!!filter && (
-            <View style={{ borderWidth: 1, borderColor: '#2A3345', borderRadius: 999, paddingVertical: 4, paddingHorizontal: 10 }}>
-              <Text style={{ color: '#9CA3AF', fontSize: 12 }}>{i18n.t('contractors.filteredBy')}: {i18n.t(`services.${filter}`) || filter}</Text>
-            </View>
-          )}
-          <Pressable
-            onPress={async()=>{
-              try {
-                const { isAiCapped, setAiCapped, includesCapError } = await import('../../src/lib/aiCap')
-                if (await isAiCapped()) { Alert.alert('AI', 'Monthly AI limit reached.'); return }
-                if (!data?.length) return;
-                const jobId = typeof params.jobId==='string' ? params.jobId : undefined
-                if (!jobId) { return; }
-                const { aiMatchContractors } = await import('../../src/lib/ai')
-                const { ensureSession } = await import('../../src/lib/supabase')
-                await ensureSession();
-                const ranked = await aiMatchContractors(jobId)
-                const byId = new Map(ranked.map(r=>[r.contractor_id, r.score]))
-                setData(prev => [...prev].sort((a:any,b:any)=> (byId.get(a.id)||0) > (byId.get(b.id)||0) ? -1 : 1))
-              } catch(e:any) {
-                if (includesCapError(e)) { const { setAiCapped } = await import('../../src/lib/aiCap'); await setAiCapped(); Alert.alert('AI', 'Monthly AI limit reached.') }
-              }
-            }}
-            style={{ marginRight: 12, borderWidth:1, borderColor:'#334155', borderRadius:999, paddingHorizontal:12, paddingVertical:6 }}
-          >
-            <View style={{ flexDirection:'row', alignItems:'center', gap:8 }}>
-              <AIBadge label={i18n.t('contractors.aiSort')} />
-            </View>
-          </Pressable>
+        <View style={{ paddingHorizontal: spacing[4], paddingTop: spacing[4], paddingBottom: 8 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Text style={{ color: colors.textPrimary, fontFamily: typography.fontFamily.bold, fontSize: typography.fontSize.xl }}>
+              {i18n.t('contractors.title')}
+            </Text>
+            {!!filter && (
+              <View style={{ borderWidth: 1, borderColor: '#2A3345', borderRadius: 999, paddingVertical: 4, paddingHorizontal: 10 }}>
+                <Text style={{ color: '#9CA3AF', fontSize: 12 }}>{i18n.t('contractors.filteredBy')}: {i18n.t(`services.${filter}`) || filter}</Text>
+              </View>
+            )}
+          </View>
+          <View style={{ flexDirection:'row', gap:8, marginTop:10 }}>
+            <Pressable
+              onPress={async()=>{
+                try {
+                  const { isAiCapped, setAiCapped, includesCapError } = await import('../../src/lib/aiCap')
+                  if (await isAiCapped()) { Alert.alert('AI', 'Monthly AI limit reached.'); return }
+                  if (!data?.length) return;
+                  const jobId = typeof params.jobId==='string' ? params.jobId : undefined
+                  if (!jobId) { return; }
+                  const { aiMatchContractors } = await import('../../src/lib/ai')
+                  const { ensureSession } = await import('../../src/lib/supabase')
+                  await ensureSession();
+                  const ranked = await aiMatchContractors(jobId)
+                  const byId = new Map(ranked.map(r=>[r.contractor_id, r.score]))
+                  setData(prev => [...prev].sort((a:any,b:any)=> (byId.get(a.id)||0) > (byId.get(b.id)||0) ? -1 : 1))
+                } catch(e:any) {
+                  if (includesCapError(e)) { const { setAiCapped } = await import('../../src/lib/aiCap'); await setAiCapped(); Alert.alert('AI', 'Monthly AI limit reached.') }
+                }
+              }}
+              style={{ borderWidth:1, borderColor:'#334155', borderRadius:999, paddingHorizontal:12, paddingVertical:6 }}
+            >
+              <View style={{ flexDirection:'row', alignItems:'center', gap:8 }}>
+                <AIBadge label={i18n.t('contractors.aiSort')} />
+              </View>
+            </Pressable>
+            <Pressable
+              onPress={async()=>{
+                try {
+                  const { isAiCapped, setAiCapped, includesCapError } = await import('../../src/lib/aiCap')
+                  if (await isAiCapped()) { Alert.alert('AI', 'Monthly AI limit reached.'); return }
+                  if (!data?.length) return;
+                  const jobId = typeof params.jobId==='string' ? params.jobId : undefined
+                  if (!jobId) { return; }
+                  const { aiExplainRanking } = await import('../../src/lib/ai')
+                  const { ensureSession } = await import('../../src/lib/supabase')
+                  await ensureSession();
+                  const payload = { jobId, contractors: data.slice(0,5).map((c:any)=> ({ id: c.id, score: Number(c.score||0), features: { rating:c.rating, services:c.services||[], location:c.location } })) }
+                  const res = await aiExplainRanking(payload)
+                  Alert.alert(i18n.t('ai.explain_ranking'), (res?.explanations||'').slice(0,800))
+                } catch(e:any) {
+                  if (includesCapError(e)) { const { setAiCapped } = await import('../../src/lib/aiCap'); await setAiCapped(); Alert.alert('AI', 'Monthly AI limit reached.') }
+                }
+              }}
+              style={{ borderWidth:1, borderColor:'#334155', borderRadius:999, paddingHorizontal:12, paddingVertical:6 }}
+            >
+              <View style={{ flexDirection:'row', alignItems:'center', gap:8 }}>
+                <AIBadge label={i18n.t('ai.explain_ranking')} />
+              </View>
+            </Pressable>
+          </View>
         </View>
 
         {loading ? (
