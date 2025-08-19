@@ -34,6 +34,7 @@ import { Card } from '../../src/components/ui/Card';
 import { PrimaryButton } from '../../src/components/ui/PrimaryButton';
 import { supabase } from '../../src/lib/supabase';
 import i18n from '../../i18n';
+import { useTx } from '../../i18n/tx';
 
 import { CATEGORY_GROUPS } from '../../src/constants/categories';
 
@@ -44,6 +45,7 @@ export default function PostJobScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const insets = useSafeAreaInsets();
+  const txServices = useTx('services');
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -207,7 +209,7 @@ export default function PostJobScreen() {
                 <Pressable onPress={() => setOpenSelector(true)} style={{ minHeight: 48, borderWidth: 1, borderColor: colors.stroke, backgroundColor: colors.surface, borderRadius: radius.lg, paddingHorizontal: 16, alignItems: 'center', flexDirection: 'row' }}>
                   <Ionicons name="briefcase-outline" size={18} color={colors.muted} />
                   <Text style={{ marginLeft: 8, color: colors.onSurface, fontFamily: typography.fontFamily.medium }}>
-                    {svc?.label ?? 'Select service'}
+                    {svc?.slug ? txServices(svc.slug) : 'Select service'}
                   </Text>
                 </Pressable>
               </View>
@@ -265,7 +267,7 @@ export default function PostJobScreen() {
                         <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: '#0F2E2B', alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
                           <Ionicons name={item.icon as any} size={18} color={'#00E6CF'} />
                         </View>
-                        <Text style={{ color: 'white' }}>{item.label}</Text>
+                        <Text style={{ color: 'white' }}>{txServices(item.slug)}</Text>
                       </View>
                       <View style={{ height: 1, backgroundColor: 'rgba(255,255,255,0.06)' }} />
                     </Pressable>

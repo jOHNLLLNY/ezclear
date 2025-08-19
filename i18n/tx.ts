@@ -3,6 +3,7 @@ import { humanizeSlug } from './humanize'
 
 export function useTx(ns?: string | string[]) {
   const { t } = useTranslation(ns ?? ['common','job','services','categories','buttons'])
-  return (key: string, opts?: any) => t(key, { defaultValue: humanizeSlug(key), ...opts })
+  // Always coerce to string to satisfy ReactNode usage in RN Text
+  return (key: string, opts?: any) => String(t(key, { defaultValue: humanizeSlug(key), ...opts }))
 }
 

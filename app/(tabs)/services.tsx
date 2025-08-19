@@ -8,7 +8,7 @@ import { SERVICES_FLAT } from '../../src/constants/categories'
 import { supabase } from '../../src/lib/supabase'
 import { SearchBar } from '../../src/components/ui/SearchBar'
 import { useAuth } from '../../src/context/AuthContext'
-import { useTx } from '../../i18n/tx'
+import i18n from '../../i18n'
 
 const SEGMENTS = [
   { id: 'all', labelKey: 'All' },
@@ -21,7 +21,6 @@ export default function ServicesScreen() {
   const { colors, spacing, typography, radius } = useTheme()
   const router = useRouter()
   const { profile, session } = useAuth()
-  const txServices = useTx('services')
   const isHire = ((profile?.user_type as any) || (session?.user?.user_metadata?.user_type as any)) === 'hirer'
   const [q, setQ] = useState('')
   const [segment, setSegment] = useState<'all' | 'Renovation' | 'exterior' | 'Maintenance'>('all')
@@ -55,7 +54,7 @@ export default function ServicesScreen() {
   const renderItem = ({ item }: { item: any }) => (
     <View style={{ marginTop: 16 }}>
       <Text style={{ color: colors.textPrimary, fontFamily: typography.fontFamily.semibold, fontSize: 18, marginBottom: 10 }}>
-        {txServices(item.key)}
+        {i18n.t(`services.${item.key}`) || (item.key.charAt(0).toUpperCase() + item.key.slice(1))}
       </Text>
       {item.items.map((s: any) => (
         <Pressable

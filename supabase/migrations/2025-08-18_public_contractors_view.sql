@@ -4,14 +4,17 @@
 create or replace view public_contractors as
 select
   id,
+  coalesce(display_name, full_name, company_name, username, 'New Contractor') as display_name,
   full_name,
+  company_name,
+  username,
   avatar_url,
   location,
   rating,
-  skills as services,
+  coalesce(service_slugs, skills, '{}'::jsonb) as services,
   user_type
 from public.profiles
-where user_type = 'worker';
+where user_type in ('worker','contractor');
 
 -- Allow anon/authenticated to select from the view
 grant select on public.public_contractors to anon, authenticated;
