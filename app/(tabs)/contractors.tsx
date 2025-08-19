@@ -12,6 +12,8 @@ import { Expandable } from '../../src/components/ui/Expandable'
 
 import { ContractorCard } from '../../src/components/contractors/ContractorCard'
 
+import { InviteBottomSheet } from '../../src/components/contractors/InviteBottomSheet'
+
 export default function ContractorsListScreen() {
   const { colors, spacing, typography } = useTheme()
   const router = useRouter()
@@ -49,6 +51,8 @@ export default function ContractorsListScreen() {
               .maybeSingle()
             // If schema supports join, re-run without maybeSingle and with filter
           } catch {}
+  const [inviteOpen, setInviteOpen] = useState<string|null>(null)
+
         }
         if (!rows) {
           const base = supabase.from('public_contractors').select('id, full_name, avatar_url, location, rating, services')
@@ -81,7 +85,7 @@ export default function ContractorsListScreen() {
         rating: item.rating,
       }}
       onPress={() => router.push(`/profile/${item.id}`)}
-      onInvite={typeof params.jobId==='string' ? () => Alert.alert('Invite', 'Coming soon') : undefined}
+      onInvite={typeof params.jobId==='string' ? () => setInviteOpen(item.id) : undefined}
       onSaveToggle={() => Alert.alert('Saved', 'Coming soon')}
       saved={false}
     />
@@ -186,6 +190,8 @@ export default function ContractorsListScreen() {
           />
         )}
       </SafeAreaView>
+        <InviteBottomSheet visible={!!inviteOpen} contractorId={inviteOpen||''} onClose={()=> setInviteOpen(null)} />
+
     </View>
   )
 }
