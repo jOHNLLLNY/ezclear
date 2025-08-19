@@ -5,6 +5,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { useTheme } from '../../src/context/ThemeProvider';
 import { useAuth } from '../../src/context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
+import i18n from '../../i18n';
+
 
 export default function EditProfileScreen() {
   const { colors, typography, spacing, radius } = useTheme();
@@ -78,7 +80,7 @@ export default function EditProfileScreen() {
 
   return (
     <Screen>
-      <ScrollView contentContainerStyle={[styles.content, { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 120 }]}>        
+      <ScrollView contentContainerStyle={[styles.content, { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 120 }]}>
         {/* Avatar block */}
         <View style={{ alignItems: 'center', marginBottom: 20 }}>
           <View style={{ width: 120, height: 120, borderRadius: 60, backgroundColor: 'rgba(255,255,255,0.06)', justifyContent: 'center', alignItems: 'center', position: 'relative', borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)' }}>
@@ -122,7 +124,7 @@ export default function EditProfileScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-      
+
       {/* Province modal */}
       <Modal visible={provinceOpen} transparent animationType="fade" onRequestClose={() => setProvinceOpen(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
