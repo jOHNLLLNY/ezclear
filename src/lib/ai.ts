@@ -51,6 +51,13 @@ export async function aiSuggestReply(history:{role:'user'|'contractor'|'system',
   return SuggestZ.parse(data);
 }
 
+export async function aiExplainEstimate(b:{title?:string;description?:string;city?:string;service_slug?:string;assumptions?:string[];exclusions?:string[]}){
+  return invoke<{ bullets: string[] }>('explain-estimate', b);
+}
+export async function aiExplainRanking(b:{ jobId:string; contractors:{ id:string; score?:number; features?:Record<string,any> }[] }){
+  return invoke<{ explanations: string }>('explain-ranking', b);
+}
+
 export async function upsertProfileEmbedding(profileId:string){
   await invoke('upsert-profile-embedding', { profileId });
 }

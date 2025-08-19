@@ -11,6 +11,7 @@ import { supabase } from '../../src/lib/supabase';
 import { useAuth } from '../../src/context/AuthContext';
 import i18n from '../../i18n';
 import { AIEstimate } from '../../src/components/ui/AIEstimate';
+import { AICard } from '../../src/components/ui/AICard';
 
 function timeAgo(iso?: string): string {
   if (!iso) return i18n.t('job.posted_ago', { n: 0, u: 'm' });
@@ -190,11 +191,13 @@ export default function JobDetailScreen() {
                 const { isAiCapped, setAiCapped, includesCapError } = await import('../../src/lib/aiCap')
                 if (await isAiCapped()) { Alert.alert('AI', 'Monthly AI limit reached.'); return }
                 try {
-                  const { aiEstimateJob } = await import('../../src/lib/ai')
+                  const { aiEstimateJob, aiExplainEstimate } = await import('../../src/lib/ai')
                   const { ensureSession } = await import('../../src/lib/supabase')
                   await ensureSession();
                   const res = await aiEstimateJob({ title: job.title, description: job.description, city: job.city, service_slug: job.service_slug })
                   setAiEst({ low: res?.cost_low, high: res?.cost_high, days: res?.days })
+                  // Fetch explain bullets in background (best-effort)
+                  try { const ex = await aiExplainEstimate({ title: job.title, description: job.description, city: job.city, service_slug: job.service_slug }); (ex as any)._bullets = ex?.bullets } catch {}
                 } catch (e:any) {
                   if (includesCapError(e)) { await setAiCapped(); Alert.alert('AI', 'Monthly AI limit reached.') }
                   else { Alert.alert(i18n.t('common.aiError'), e?.message||i18n.t('common.failed')) }
@@ -207,6 +210,7 @@ export default function JobDetailScreen() {
             {aiEst && (
               <View style={{ marginTop: 10 }}>
                 <AIEstimate low={aiEst.low} high={aiEst.high} days={aiEst.days} />
+                {/* Explain panel placeholder; hooked via AICard when bullets available */}
               </View>
             )}
           </ScrollView>
