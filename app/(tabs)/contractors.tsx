@@ -10,37 +10,7 @@ import { AIBadge } from '../../src/components/ui/AIBadge'
 import { AICard } from '../../src/components/ui/AICard'
 import { Expandable } from '../../src/components/ui/Expandable'
 
-// Simple contractor card
-function ContractorCard({ item, onPress }: { item: any; onPress: () => void }) {
-  const { colors, typography } = useTheme()
-  const skills: string[] = Array.isArray(item.skills) ? item.skills : []
-  return (
-    <Pressable onPress={onPress} android_ripple={{ color: '#00000022' }} style={{ backgroundColor: '#101826', borderRadius: 16, borderWidth: 1, borderColor: '#2A3345', padding: 12, flexDirection: 'row', alignItems: 'center' }}>
-      <Image source={{ uri: item.avatar_url || undefined }} style={{ width: 64, height: 64, borderRadius: 12, backgroundColor: '#0F172A' }} />
-      <View style={{ marginLeft: 12, flex: 1 }}>
-        <Text style={{ color: 'white', fontFamily: typography.fontFamily.semibold, fontSize: typography.fontSize.base }} numberOfLines={1}>
-          {item.full_name || 'Unnamed'}
-        </Text>
-        {!!item.location && (
-          <Text style={{ color: '#9CA3AF', marginTop: 2 }} numberOfLines={1}>{item.location}</Text>
-        )}
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
-          {skills.slice(0, 2).map((s, idx) => (
-            <View key={idx} style={{ borderWidth: 1, borderColor: '#2A3345', borderRadius: 999, paddingVertical: 4, paddingHorizontal: 8 }}>
-              <Text style={{ color: '#9CA3AF', fontSize: 12 }}>{s}</Text>
-            </View>
-          ))}
-        </View>
-      </View>
-      {typeof item.rating === 'number' && (
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 8 }}>
-          <Ionicons name="star" size={16} color="#FBBF24" />
-          <Text style={{ color: 'white', marginLeft: 4 }}>{item.rating.toFixed(1)}</Text>
-        </View>
-      )}
-    </Pressable>
-  )
-}
+import { ContractorCard } from '../../src/components/contractors/ContractorCard'
 
 export default function ContractorsListScreen() {
   const { colors, spacing, typography } = useTheme()
@@ -100,7 +70,21 @@ export default function ContractorsListScreen() {
   }, [filter])
 
   const renderItem = ({ item }: { item: any }) => (
-    <ContractorCard item={item} onPress={() => router.push(`/(tabs)/profile`)} />
+    <ContractorCard
+      item={{
+        user_id: item.id,
+        full_name: item.full_name,
+        city: item.location,
+        avatar_url: item.avatar_url,
+        headline: item.headline,
+        primary_service: Array.isArray(item.services) ? item.services?.[0] : undefined,
+        rating: item.rating,
+      }}
+      onPress={() => router.push(`/profile/${item.id}`)}
+      onInvite={typeof params.jobId==='string' ? () => Alert.alert('Invite', 'Coming soon') : undefined}
+      onSaveToggle={() => Alert.alert('Saved', 'Coming soon')}
+      saved={false}
+    />
   )
 
   return (
