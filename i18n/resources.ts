@@ -218,6 +218,15 @@ export const UK = {
     tldr: 'Коротко',
     loading: 'Аналіз...',
     note: 'Орієнтовно. Уточніть деталі з підрядником.'
+  contractors: {
+    title: 'Contractors',
+    filteredBy: 'Filtered by',
+    aiSort: 'AI Sort',
+    savedEmpty: 'No saved contractors yet. Browse and tap the ☆ to save.',
+    invite: 'Invite',
+    viewProfile: 'View profile'
+  },
+
   },
 
     attachments: 'Вкладення',
@@ -349,6 +358,15 @@ export const UK = {
     filters: 'Фільтри',
     apply: 'Застосувати',
     details: 'Деталі',
+  contractors: {
+    title: 'Підрядники',
+    filteredBy: 'Відібрано за',
+    aiSort: 'AI сортування',
+    savedEmpty: 'Немає збережених підрядників. Перегляньте список і натисніть ☆, щоб зберегти.',
+    invite: 'Запросити',
+    viewProfile: 'Переглянути профіль'
+  },
+
     onlyHirers: 'Лише для наймачів',
     onlyWorkers: 'Лише для виконавців',
     applications: 'Заявки',

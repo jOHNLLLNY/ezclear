@@ -86,8 +86,12 @@ export default function ContractorsListScreen() {
       }}
       onPress={() => router.push(`/profile/${item.id}`)}
       onInvite={typeof params.jobId==='string' ? () => setInviteOpen(item.id) : undefined}
-      onSaveToggle={() => Alert.alert('Saved', 'Coming soon')}
-      saved={false}
+      onSaveToggle={async()=>{
+        const { toggleSaved } = await import('../../src/lib/saved')
+        const saved = await toggleSaved(item.id)
+        setData(prev => prev.map((r:any)=> r.id===item.id ? { ...r, _saved:saved } : r))
+      }}
+      saved={!!item._saved}
     />
   )
 
